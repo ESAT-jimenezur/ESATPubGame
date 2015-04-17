@@ -2,6 +2,11 @@
 
 using namespace cocos2d;
 
+PlayerBall::PlayerBall() {
+  center_ = Vec2(500.0f, 250.0f);
+  can_move_ = false;
+}
+
 PlayerBall* PlayerBall::create() {
   PlayerBall* sprite = new PlayerBall();
 
@@ -38,10 +43,12 @@ void PlayerBall::addEvents() {
   };
 
   listener->onTouchMoved = [&](Touch* touch, Event* event) {
-    setPosition(touch->getLocation());
+    //setPosition(touch->getLocation());
+    setPosition(PlayerBall::move(touch));
   };
 
   listener->onTouchEnded = [=](Touch* touch, Event* event) {
+    PlayerBall::returnToCenter(touch);
     PlayerBall::touchEvent(touch, touch->getLocation());
   };
 
@@ -50,4 +57,32 @@ void PlayerBall::addEvents() {
 
 void PlayerBall::touchEvent(Touch* touch, Vec2 _p) {
   CCLOG("Touched the ball!");
+}
+
+void PlayerBall::returnToCenter(Touch* touch) {
+  MoveTo* action = MoveTo::create(0.25f, center_);
+  this->runAction(action);
+}
+
+Vec2 PlayerBall::move(Touch* touch) {
+  float tmp_x = touch->getLocation().x;
+  float tmp_y = touch->getLocation().y;
+
+  float res_x;
+  float res_y;
+
+  if (tmp_x > center_.x) {
+    res_x = center_.x - (tmp_x - center_.x);
+  }
+  else if (tmp_x < center_.x) {
+    res_x = center_.x + (center_.x - tmp_x);
+  }
+  if (tmp_y > center_.y) {
+    res_y = center_.y - (tmp_y - center_.y);
+  }
+  else if (tmp_y < center_.y) {
+    res_y = center_.y + (center_.y - tmp_y);
+  }
+
+  return Vec2(res_x, res_y);
 }

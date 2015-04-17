@@ -11,7 +11,7 @@ Scene* HelloWorld::createScene()
     auto layer = HelloWorld::create();
 
     // add layer as a child to scene
-    scene->addCh
+    scene->addChild(layer);
     
     CCLOG("HOLIS");
     
